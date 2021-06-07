@@ -2,6 +2,7 @@ package com.jk7d.projectpbackend.application.security;
 
 import com.jk7d.projectpbackend.infrastructure.common.JwtUtil;
 import com.jk7d.projectpbackend.infrastructure.constant.JwtType;
+import com.jk7d.projectpbackend.service.security.IUserDetails;
 import com.jk7d.projectpbackend.service.security.IUserDetailsService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,11 +39,10 @@ public class AccessTokenFilter extends OncePerRequestFilter {
                 final String username = this.jwtUtil.getUsernameFromJwt(accessJwt, JwtType.ACCESS);
 
                 // Build details
-                final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                final IUserDetails userDetails = (IUserDetails) this.userDetailsService.loadUserByUsername(username);
                 final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
                         userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-
                 // Set auth context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

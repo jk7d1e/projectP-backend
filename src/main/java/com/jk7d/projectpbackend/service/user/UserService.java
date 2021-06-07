@@ -1,7 +1,8 @@
 package com.jk7d.projectpbackend.service.user;
 
-import com.jk7d.projectpbackend.adapter.user.UserCreateDto;
-import com.jk7d.projectpbackend.adapter.user.UserDto;
+import com.jk7d.projectpbackend.adapter.user.model.UserCreateDto;
+import com.jk7d.projectpbackend.adapter.user.model.UserDto;
+import com.jk7d.projectpbackend.adapter.user.model.UserUpdateDto;
 import com.jk7d.projectpbackend.store.user.User;
 import com.jk7d.projectpbackend.store.user.UserRepository;
 import com.jk7d.projectpbackend.store.user.UserRole;
@@ -11,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -61,7 +61,7 @@ public class UserService {
 
         if (user.isPresent()) {
             final User userObj = user.get();
-            final UserDto userDto = new UserDto(userObj.getId(), userObj.getUsername(), userObj.getEmail());
+            final UserDto userDto = new UserDto(userObj.getId(), userObj.getUsername(), userObj.getEmail(), userObj.getRole().name());
             return ResponseEntity.ok().body(userDto);
         } else {
             return ResponseEntity.badRequest().body("Error: User " + userId + " not found.");
@@ -69,15 +69,15 @@ public class UserService {
     }
 
     /**
-     * @param userCreateDto
+     * @param userUpdateDto
      * @return
      */
-    public ResponseEntity<?> updateUserById(final UUID id, final UserCreateDto userCreateDto) {
+    public ResponseEntity<?> updateUserById(final UUID id, final UserUpdateDto userUpdateDto) {
         final Optional<User> user = this.userRepository.findById(id);
         if (user.isPresent()) {
-            final User userObj = this.validateUserFieldsForUpdate(userCreateDto, user.get());
+            final User userObj = this.validateUserFieldsForUpdate(userUpdateDto, user.get());
 
-            final UserDto userDto = new UserDto(userObj.getId(), userObj.getUsername(), userObj.getEmail());
+            final UserDto userDto = new UserDto(userObj.getId(), userObj.getUsername(), userObj.getEmail(), userObj.getRole().name());
             return ResponseEntity.ok().body(userDto);
         } else {
             return ResponseEntity.badRequest().body("Error: Project " + id + " not found.");
@@ -100,27 +100,41 @@ public class UserService {
     }
 
     /**
-     * @param userCreateDto
-     * @param user
-     * @return
+     * Check and compare each field of dto and the entity
+     *
+     * @param userUpdateDto User update request body
+     * @param user          User entoty
+     * @return updated user object
      */
-    private User validateUserFieldsForUpdate(final UserCreateDto userCreateDto, final User user) {
-        if (!userCreateDto.username().equals(user.getUsername())) {
-            user.setUsername(userCreateDto.username());
+    private User validateUserFieldsForUpdate(final UserUpdateDto userUpdateDto, final User user) {
+        if (!userUpdateDto.username().equals(user.getUsername())) {
+            user.setUsername(userUpdateDto.username());
         }
 
-        if (!userCreateDto.email().equals(user.getEmail())) {
-            user.setEmail(userCreateDto.email());
+        if (!userUpdateDto.email().equals(user.getEmail())) {
+            user.setEmail(userUpdateDto.email());
         }
 
-        if (!userCreateDto.isEnabled() == user.isEnabled()) {
-            user.setEnabled(userCreateDto.isEnabled());
+        if (!userUpdateDto.isEnabled() == user.isEnabled()) {
+            user.setEnabled(userUpdateDto.isEnabled());
         }
 
-        if (!userCreateDto.role().equals(user.getRole().name())) {
-            user.setRole(UserRole.fromValue(userCreateDto.role()));
+        if (!userUpdateDto.role().equals(user.getRole().name())) {
+            user.setRole(UserRole.fromValue(userUpdateDto.role()));
         }
 
         return this.userRepository.save(user);
+    }
+
+    /**
+     * @return
+     */
+    public ResponseEntity<?> readAllUsers() {
+        final List<User> users = this.userRepository.findAll();
+        final List<UserDto> userDtos = new ArrayList<>(Collections.emptyList());
+        for (final User u : users) {
+            userDtos.add(new UserDto(u.getId(), u.getUsername(), u.getEmail(), u.getRole().name()));
+        }
+        return ResponseEntity.ok().body(userDtos);
     }
 }

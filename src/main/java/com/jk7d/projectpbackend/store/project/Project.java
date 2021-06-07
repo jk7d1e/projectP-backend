@@ -1,6 +1,7 @@
 package com.jk7d.projectpbackend.store.project;
 
 import com.jk7d.projectpbackend.store.DateAudit;
+import com.jk7d.projectpbackend.store.task.Task;
 import com.jk7d.projectpbackend.store.user.User;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -24,22 +25,26 @@ public class Project extends DateAudit {
     @Column(name = "description", length = 500)
     private String description;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "owner_id", nullable = false, referencedColumnName = "id")
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinTable(
             name = "tab_project_members",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<User> members;
 
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private List<Task> tasks;
+
     public Project(final String name, final String description, final User owner) {
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.members = Collections.emptyList();
+        this.tasks = Collections.emptyList();
     }
 
     public Project() {
@@ -84,5 +89,13 @@ public class Project extends DateAudit {
 
     public void setMembers(final List<User> members) {
         this.members = members;
+    }
+
+    public List<Task> getTasks() {
+        return this.tasks;
+    }
+
+    public void setTasks(final List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

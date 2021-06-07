@@ -32,10 +32,10 @@ public class IUserDetails implements UserDetails {
         this.email = email;
         this.password = password;
         this.isEnabled = isEnabled;
+        this.authorities = authorities;
     }
 
     public static IUserDetails build(final User user) {
-
         final Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
 
         return new IUserDetails(

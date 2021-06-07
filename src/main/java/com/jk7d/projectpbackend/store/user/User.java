@@ -2,6 +2,7 @@ package com.jk7d.projectpbackend.store.user;
 
 import com.jk7d.projectpbackend.store.DateAudit;
 import com.jk7d.projectpbackend.store.project.Project;
+import com.jk7d.projectpbackend.store.task.Task;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -33,8 +34,14 @@ public class User extends DateAudit {
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private List<Project> ownedProjects;
 
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    private List<Task> createdTasks;
+
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private List<Project> memberOfProjects;
+
+    @ManyToMany(mappedBy = "assignees", fetch = FetchType.LAZY)
+    private List<Task> assignedTasks;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -53,6 +60,8 @@ public class User extends DateAudit {
         this.isEnabled = false;
         this.ownedProjects = Collections.emptyList();
         this.memberOfProjects = Collections.emptyList();
+        this.createdTasks = Collections.emptyList();
+        this.assignedTasks = Collections.emptyList();
         this.role = UserRole.USER;
     }
 
@@ -122,5 +131,21 @@ public class User extends DateAudit {
 
     public void setRole(final UserRole role) {
         this.role = role;
+    }
+
+    public List<Task> getCreatedTasks() {
+        return this.createdTasks;
+    }
+
+    public void setCreatedTasks(final List<Task> createdTasks) {
+        this.createdTasks = createdTasks;
+    }
+
+    public List<Task> getAssignedTasks() {
+        return this.assignedTasks;
+    }
+
+    public void setAssignedTasks(final List<Task> assignedTasks) {
+        this.assignedTasks = assignedTasks;
     }
 }

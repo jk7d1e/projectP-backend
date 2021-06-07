@@ -19,11 +19,11 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-
     @Autowired
     public ProjectController(final ProjectService projectService) {
         this.projectService = projectService;
     }
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createProject(@Valid @RequestBody final ProjectCreateDto projectCreateDto) throws URISyntaxException {

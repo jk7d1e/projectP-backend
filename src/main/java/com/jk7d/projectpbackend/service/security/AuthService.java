@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
@@ -85,7 +85,11 @@ public class AuthService {
         this.confirmationTokenRepository.save(confirmationToken);
 
         // Send confirmation Email
-        this.sendConfirmationEmail(user, confirmationToken);
+        try {
+            this.mailService.sendConfirmationEmail(user, confirmationToken);
+        } catch (final MessagingException e) {
+            e.printStackTrace();
+        }
 
         return ResponseEntity.ok().body("Verification Email sent.");
     }
@@ -217,22 +221,5 @@ public class AuthService {
         return ResponseCookie.from("_jid", "")
                 .maxAge(0L)
                 .build();
-    }
-
-    /**
-     * Constructs a confirmation mail
-     *
-     * @param user              User to send this email to
-     * @param confirmationToken Token to verify
-     */
-    public void sendConfirmationEmail(final User user, final ConfirmationToken confirmationToken) {
-        final SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Complete Registration!");
-        mailMessage.setFrom("julesodd42@gmail.com");
-        mailMessage.setText("To confirm your account, please click here : "
-                + "http://localhost:8080/auth/register/confirm?ct=" + confirmationToken.getToken());
-
-        this.mailService.sendEmail(mailMessage);
     }
 }

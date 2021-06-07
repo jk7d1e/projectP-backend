@@ -1,4 +1,4 @@
-package com.jk7d.projectpbackend.adapter.user;
+package com.jk7d.projectpbackend.adapter.user.model;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

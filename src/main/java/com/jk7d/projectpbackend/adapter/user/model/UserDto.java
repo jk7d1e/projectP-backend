@@ -1,8 +1,8 @@
-package com.jk7d.projectpbackend.adapter.user;
+package com.jk7d.projectpbackend.adapter.user.model;
 
 import java.util.UUID;
 
-public record UserDto(UUID id, String username, String email) {
+public record UserDto(UUID id, String username, String email, String role) {
 
     @Override
     public UUID id() {
@@ -17,5 +17,10 @@ public record UserDto(UUID id, String username, String email) {
     @Override
     public String email() {
         return this.email;
+    }
+
+    @Override
+    public String role() {
+        return this.role;
     }
 }

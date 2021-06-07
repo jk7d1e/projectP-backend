@@ -19,7 +19,7 @@ public class ConfirmationToken {
     @Column(name = "expires_at", nullable = false)
     private Date expiresAt;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
     private User user;
 

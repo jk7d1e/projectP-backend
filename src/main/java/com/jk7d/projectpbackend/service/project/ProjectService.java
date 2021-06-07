@@ -47,7 +47,6 @@ public class ProjectService {
     }
 
     /**
-     * TODO: Only owner and members can read
      *
      * @param id
      * @return
