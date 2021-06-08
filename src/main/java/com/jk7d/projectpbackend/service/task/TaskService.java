@@ -37,13 +37,12 @@ public class TaskService {
     }
 
     /**
-     * @param projectId
      * @param taskCreateDto
      * @return
      * @throws URISyntaxException
      */
-    public ResponseEntity<?> createTask(final UUID projectId, final TaskCreateDto taskCreateDto) throws URISyntaxException {
-        final Project project = this.findProject(projectId);
+    public ResponseEntity<?> createTask(final TaskCreateDto taskCreateDto) throws URISyntaxException {
+        final Project project = this.findProject(UUID.fromString(taskCreateDto.projectId()));
         if (project == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -59,6 +58,7 @@ public class TaskService {
     }
 
     /**
+     *
      * @param projectId
      * @param taskId
      * @return
@@ -81,6 +81,7 @@ public class TaskService {
     }
 
     /**
+     *
      * @param projectId
      * @param taskId
      * @param taskUpdateDto
@@ -103,6 +104,7 @@ public class TaskService {
     }
 
     /**
+     *
      * @param projectId
      * @param taskId
      * @return
@@ -122,6 +124,7 @@ public class TaskService {
     }
 
     /**
+     *
      * @param projectId
      * @return
      */
@@ -131,6 +134,7 @@ public class TaskService {
     }
 
     /**
+     *
      * @param taskUpdateDto
      * @param task
      * @return
