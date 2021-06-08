@@ -30,9 +30,8 @@ public class TaskSecurity {
 
     /**
      * Check if current signed in user is assigned to task
-     *
      * @param authentication signed in user
-     * @param taskId         task
+     * @param taskId task
      * @return true if assigned, false if not
      */
     public boolean isTaskAssignee(final Authentication authentication, final UUID taskId) {

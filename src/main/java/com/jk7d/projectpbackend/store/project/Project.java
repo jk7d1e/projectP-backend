@@ -36,7 +36,7 @@ public class Project extends DateAudit {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<User> members;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch = FetchType.LAZY)
     private List<Task> tasks;
 
     public Project(final String name, final String description, final User owner) {

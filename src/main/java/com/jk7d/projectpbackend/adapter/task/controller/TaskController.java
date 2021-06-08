@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/projects/{projectId}/tasks")
+@RequestMapping(value = "/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -25,14 +25,15 @@ public class TaskController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@projectSecurity.isProjectMember(authentication, #projectId)")
-    public ResponseEntity<?> createTask(@PathVariable final UUID projectId, @Valid @RequestBody final TaskCreateDto taskCreateDto) throws URISyntaxException {
-        return this.taskService.createTask(projectId, taskCreateDto);
+    @PreAuthorize("hasAuthority('ADMIN') or @projectSecurity.isProjectMember(authentication, #taskCreateDto.projectId())")
+    public ResponseEntity<?> createTask(@Valid @RequestBody final TaskCreateDto taskCreateDto) throws URISyntaxException {
+        return this.taskService.createTask(taskCreateDto);
     }
 
     @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@projectSecurity.isProjectMember(authentication, #projectId)")
-    public ResponseEntity<?> readTaskById(@PathVariable final UUID projectId, @PathVariable final UUID taskId) {
+    @PreAuthorize("hasAuthority('ADMIN') or @projectSecurity.isProjectMember(authentication, #projectId)")
+    public ResponseEntity<?> readTaskById(@RequestParam(name = "pid") final UUID projectId,
+                                          @PathVariable final UUID taskId) {
         return this.taskService.readTaskById(projectId, taskId);
     }
 

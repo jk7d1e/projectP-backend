@@ -47,9 +47,9 @@ public class ProjectSecurity {
      * @param projectId      project
      * @return true if member of this project
      */
-    public boolean isProjectMember(final Authentication authentication, final UUID projectId) {
+    public boolean isProjectMember(final Authentication authentication, final String projectId) {
         final IUserDetails userDetails = (IUserDetails) authentication.getPrincipal();
-        final Optional<Project> project = this.projectRepository.findById(projectId);
+        final Optional<Project> project = this.projectRepository.findById(UUID.fromString(projectId));
         if (project.isEmpty()) {
             return false;
         }

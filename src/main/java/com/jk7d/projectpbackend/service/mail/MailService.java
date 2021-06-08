@@ -27,6 +27,7 @@ public class MailService {
     }
 
     /**
+     *
      * @param user
      * @param confirmationToken
      * @throws MessagingException
